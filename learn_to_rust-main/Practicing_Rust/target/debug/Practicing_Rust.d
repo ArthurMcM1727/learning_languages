@@ -1,0 +1,1 @@
+C:\Users\zmcmillan\projects\Troubleshooting\ notes\NotestTracker\Practicing_Rust\target\debug\Practicing_Rust.exe: C:\Users\zmcmillan\projects\Troubleshooting\ notes\NotestTracker\Practicing_Rust\src\main.rs
