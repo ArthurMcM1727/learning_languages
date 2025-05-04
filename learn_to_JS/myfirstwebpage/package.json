@@ -1,0 +1,11 @@
+{
+  "name": "vehicle-search",
+  "version": "1.0.0",
+  "description": "A web application to search vehicle information using VIN",
+  "main": "script.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "start": "python -m http.server 8000"
+  }
+}
