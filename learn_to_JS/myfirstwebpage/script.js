@@ -29,10 +29,45 @@ class VehicleSearch {
         
         const data = await response.json();
         console.log('VIN API Response:', data); // Debug log
+        
         return data;
     }
 
-    displayVehicleInfo(vehicleData) {
+    async fetchFuelEconomyData(year, make, model) {
+        try {
+            const optionsUrl = `https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year=${year}&make=${make}&model=${model}`;
+            const optionsRes = await fetch(optionsUrl);
+            const optionsText = await optionsRes.text();
+            
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(optionsText, "application/xml");
+            const firstVehicleId = xmlDoc.querySelector("menuItem > value")?.textContent;
+    
+            if (!firstVehicleId) {
+                return null;
+            }
+    
+            const vehicleDetailUrl = `https://www.fueleconomy.gov/ws/rest/vehicle/${firstVehicleId}`;
+            const detailRes = await fetch(vehicleDetailUrl);
+            const detailText = await detailRes.text();
+            const detailDoc = parser.parseFromString(detailText, "application/xml");
+    
+            return {
+                cityMPG: detailDoc.querySelector("city08")?.textContent || "N/A",
+                highwayMPG: detailDoc.querySelector("highway08")?.textContent || "N/A",
+                combinedMPG: detailDoc.querySelector("comb08")?.textContent || "N/A",
+                engineSize: detailDoc.querySelector("displ")?.textContent || "N/A",
+                cylinders: detailDoc.querySelector("cylinders")?.textContent || "N/A",
+                fuelType: detailDoc.querySelector("fuelType")?.textContent || "N/A"
+            };
+    
+        } catch (error) {
+            console.error("FuelEconomy API Error:", error);
+            return null;
+        }
+    }
+
+    displayVehicleInfo(vehicleData, fuelData) {
         if (!vehicleData || !vehicleData.Results || !vehicleData.Results[0]) {
             this.vehicleInfoDiv.innerHTML = `<p>No data found for VIN ${this.vinInput.value}</p>`;
             return;
@@ -48,6 +83,15 @@ class VehicleSearch {
                 <p><strong>Year:</strong> ${vehicle.ModelYear}</p>
                 <p><strong>Body Style:</strong> ${vehicle.BodyClass || 'N/A'}</p>
                 <p><strong>Engine:</strong> ${vehicle.EngineModel || 'N/A'}</p>
+                ${fuelData ? `
+                    <h4>Fuel Economy Information</h4>
+                    <p><strong>City MPG:</strong> ${fuelData.cityMPG}</p>
+                    <p><strong>Highway MPG:</strong> ${fuelData.highwayMPG}</p>
+                    <p><strong>Combined MPG:</strong> ${fuelData.combinedMPG}</p>
+                    <p><strong>Engine Size:</strong> ${fuelData.engineSize}L</p>
+                    <p><strong>Cylinders:</strong> ${fuelData.cylinders}</p>
+                    <p><strong>Fuel Type:</strong> ${fuelData.fuelType}</p>
+                ` : ''}
             </div>
         `;
     }
@@ -76,9 +120,22 @@ class VehicleSearch {
             // Show loading state
             this.showLoading();
             
-            // Fetch and display data
-            const data = await this.fetchVehicleData(vin);
-            this.displayVehicleInfo(data);
+            // Fetch vehicle data first
+            const vehicleData = await this.fetchVehicleData(vin);
+            
+            // Then fetch fuel economy data if vehicle data was found
+            let fuelData = null;
+            if (vehicleData?.Results?.[0]) {
+                const vehicle = vehicleData.Results[0];
+                fuelData = await this.fetchFuelEconomyData(
+                    vehicle.ModelYear,
+                    vehicle.Make,
+                    vehicle.Model
+                );
+            }
+            
+            // Display all the data
+            this.displayVehicleInfo(vehicleData, fuelData);
             
         } catch (error) {
             this.displayError(error);
@@ -86,5 +143,7 @@ class VehicleSearch {
     }
 }
 
-// Initialize the vehicle search functionality
-const vehicleSearch = new VehicleSearch();
+// Wait for DOM to be fully loaded before initializing
+document.addEventListener('DOMContentLoaded', () => {
+    const vehicleSearch = new VehicleSearch();
+});
