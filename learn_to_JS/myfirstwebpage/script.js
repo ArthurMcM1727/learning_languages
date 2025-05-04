@@ -1,59 +1,90 @@
-document.getElementById("searchButton").addEventListener("click", function () {
-    const VIN = document.getElementById("vinInput").value.trim();
-
-    // Clear previous results
-    document.getElementById("vehicleInfo").innerHTML = "";
-
-
-    // Check if VIN is provided
-    const hasVIN = VIN.length > 0;
-
-    if (!hasVIN) {
-        alert("Please fill in VIN number.");
-        return;
-    }
-
-    if (hasVIN && VIN.length !== 17) {
-        alert("Please enter a valid 17-character VIN.");
-        return;
-    }
-
-    // Only make the VIN API call if VIN is provided
-    if (hasVIN) {
-        const urlVIN = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${VIN}?format=json`;
+class VehicleSearch {
+    constructor() {
+        this.API_BASE_URL = 'https://vpic.nhtsa.dot.gov/api/vehicles';
+        this.searchButton = document.getElementById("searchButton");
+        this.vinInput = document.getElementById("vinInput");
+        this.vehicleInfoDiv = document.getElementById("vehicleInfo");
         
-        fetch(urlVIN)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('VIN API Response:', data); // Debug log
-                
-                if (data.Results && data.Results[0]) {
-                    const vehicleData = data.Results[0];
-                    document.getElementById("vehicleInfo").innerHTML = `
-                        <div class="result-card">
-                            <h3>VIN Search Results</h3>
-                            <p><strong>VIN:</strong> ${vehicleData.VIN}</p>
-                            <p><strong>Make:</strong> ${vehicleData.Make}</p>
-                            <p><strong>Model:</strong> ${vehicleData.Model}</p>
-                            <p><strong>Year:</strong> ${vehicleData.ModelYear}</p>
-                            <p><strong>Body Style:</strong> ${vehicleData.BodyClass || 'N/A'}</p>
-                            <p><strong>Engine:</strong> ${vehicleData.EngineModel || 'N/A'}</p>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById("vehicleInfo").innerHTML = 
-                        `<p>No data found for VIN ${VIN}</p>`;
-                }
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                document.getElementById("vehicleInfo").innerHTML = 
-                    `<p>Error retrieving VIN data. Please try again.</p>`;
-            });
+        // Bind event listeners
+        this.searchButton.addEventListener("click", () => this.handleSearch());
     }
-});
+
+    validateVIN(vin) {
+        if (!vin) {
+            throw new Error("Please enter a VIN number.");
+        }
+        if (vin.length !== 17) {
+            throw new Error("Please enter a valid 17-character VIN.");
+        }
+        return true;
+    }
+
+    async fetchVehicleData(vin) {
+        const url = `${this.API_BASE_URL}/decodevinvalues/${vin}?format=json`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        console.log('VIN API Response:', data); // Debug log
+        return data;
+    }
+
+    displayVehicleInfo(vehicleData) {
+        if (!vehicleData || !vehicleData.Results || !vehicleData.Results[0]) {
+            this.vehicleInfoDiv.innerHTML = `<p>No data found for VIN ${this.vinInput.value}</p>`;
+            return;
+        }
+
+        const vehicle = vehicleData.Results[0];
+        this.vehicleInfoDiv.innerHTML = `
+            <div class="result-card">
+                <h3>VIN Search Results</h3>
+                <p><strong>VIN:</strong> ${vehicle.VIN}</p>
+                <p><strong>Make:</strong> ${vehicle.Make}</p>
+                <p><strong>Model:</strong> ${vehicle.Model}</p>
+                <p><strong>Year:</strong> ${vehicle.ModelYear}</p>
+                <p><strong>Body Style:</strong> ${vehicle.BodyClass || 'N/A'}</p>
+                <p><strong>Engine:</strong> ${vehicle.EngineModel || 'N/A'}</p>
+            </div>
+        `;
+    }
+
+    displayError(error) {
+        this.vehicleInfoDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+        console.error('Error:', error);
+    }
+
+    clearResults() {
+        this.vehicleInfoDiv.innerHTML = "";
+    }
+
+    showLoading() {
+        this.vehicleInfoDiv.innerHTML = "<p>Loading vehicle information...</p>";
+    }
+
+    async handleSearch() {
+        try {
+            const vin = this.vinInput.value.trim();
+            this.clearResults();
+            
+            // Validate input
+            this.validateVIN(vin);
+            
+            // Show loading state
+            this.showLoading();
+            
+            // Fetch and display data
+            const data = await this.fetchVehicleData(vin);
+            this.displayVehicleInfo(data);
+            
+        } catch (error) {
+            this.displayError(error);
+        }
+    }
+}
+
+// Initialize the vehicle search functionality
+const vehicleSearch = new VehicleSearch();
