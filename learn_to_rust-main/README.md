@@ -1,2 +1,2 @@
-# NotestTracker
-Keep notes of specific boards depending on order
+# intall rust notes
+- 
