@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "learn_to_C#", "learn_to_C#"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "firstApplication", "learn_to_C#\firstApplication\firstApplication.csproj", "{BB5CFB00-DAF3-441B-8AC7-2E0F6D3B48CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "imageConvertor", "learn_to_C#\imageConvertor\imageConvertor.csproj", "{4C532953-3F7D-4C02-9ED4-EB327676DED1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,11 +31,24 @@ Global
 		{BB5CFB00-DAF3-441B-8AC7-2E0F6D3B48CC}.Release|x64.Build.0 = Release|Any CPU
 		{BB5CFB00-DAF3-441B-8AC7-2E0F6D3B48CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB5CFB00-DAF3-441B-8AC7-2E0F6D3B48CC}.Release|x86.Build.0 = Release|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Debug|x64.Build.0 = Debug|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Debug|x86.Build.0 = Debug|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Release|x64.ActiveCfg = Release|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Release|x64.Build.0 = Release|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Release|x86.ActiveCfg = Release|Any CPU
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BB5CFB00-DAF3-441B-8AC7-2E0F6D3B48CC} = {9F4E94D0-22DF-8CCC-066B-54CFE782647F}
+		{4C532953-3F7D-4C02-9ED4-EB327676DED1} = {9F4E94D0-22DF-8CCC-066B-54CFE782647F}
 	EndGlobalSection
 EndGlobal
